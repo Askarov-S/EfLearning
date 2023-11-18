@@ -25,8 +25,9 @@ public class Repository<T> : IRepository<T> where T : Auditable
     public async Task<bool> DeleteAsync(long id)
     {
         var deletedValue = await GetAsysn(i => i.Id == id);
-        
-        throw new NotImplementedException();
+        var entry = appDbContext.Remove(deletedValue);
+        await SaveChangesAsync();
+        return true;
     }
 
     public IQueryable<T> GetAll(Expression<Func<T, bool>>? expression = null)
@@ -34,7 +35,6 @@ public class Repository<T> : IRepository<T> where T : Auditable
         IQueryable<T> values = dbSet.Where(expression);
         return values;
     }
-
     public async Task<T> GetAsysn(Expression<Func<T, bool>>? expression)
     {
         var value =await GetAll().FirstOrDefaultAsync();
